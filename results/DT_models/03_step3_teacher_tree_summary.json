@@ -1,0 +1,1441 @@
+{
+  "data_prep": {
+    "rows_before_drop": 259227,
+    "rows_dropped": 578,
+    "rows_after_drop": 258649
+  },
+  "features": {
+    "numeric_features": [
+      "storey_mid",
+      "remaining_lease_years",
+      "mrt_walking_distance",
+      "dist_to_cbd_m",
+      "dist_nearest_park_m",
+      "dist_nearest_hawker_centre_m",
+      "sora_monthly_avg"
+    ],
+    "categorical_features": [
+      "region",
+      "mature_estate",
+      "flat_type",
+      "flat_model"
+    ],
+    "macro_time_features": [
+      "sora_monthly_avg"
+    ],
+    "excluded_features": [
+      {
+        "feature": "Per_Capita_GDP",
+        "reason": "Removed from the final explanatory tree because it acts mainly as a macroeconomic regime proxy. Although predictive, it tends to encode broad time effects rather than transaction-level housing structure."
+      },
+      {
+        "feature": "floor_area_sqm",
+        "reason": "Removed in this alternative specification to surface secondary structural, lease, and financing effects that may otherwise be dominated by the direct size signal."
+      },
+      {
+        "feature": "region_URA",
+        "reason": "Removed in this alternative specification to avoid overlapping broad geography features and to let the tree rely on the remaining location indicators more parsimoniously."
+      }
+    ]
+  },
+  "step1_baseline": {
+    "train": {
+      "mae": 87162.16347636745,
+      "mse": 14305303422.917889,
+      "rmse": 119604.78010062093,
+      "r2": 0.5713775563607173
+    },
+    "validation": {
+      "mae": 86785.19464915813,
+      "mse": 14264665952.15902,
+      "rmse": 119434.77697956747,
+      "r2": 0.5751002292940326
+    },
+    "test": {
+      "mae": 87258.5053911881,
+      "mse": 14368387379.658323,
+      "rmse": 119868.20837761079,
+      "r2": 0.5731375048696487
+    }
+  },
+  "step2_teacher_grid": [
+    {
+      "config": {
+        "max_depth": 6,
+        "min_samples_leaf": 1000,
+        "min_samples_split": 200,
+        "ccp_alpha": 0.0
+      },
+      "depth": 6,
+      "leaf_count": 48,
+      "train": {
+        "mae": 71006.97116976709,
+        "mse": 9999069633.849249,
+        "rmse": 99995.34806104357,
+        "r2": 0.7004030229995903
+      },
+      "validation": {
+        "mae": 70616.99339231243,
+        "mse": 9830954911.417301,
+        "rmse": 99151.1720123232,
+        "r2": 0.7071666100214788
+      },
+      "test": {
+        "mae": 71228.5834817761,
+        "mse": 10081243278.333084,
+        "rmse": 100405.3946674833,
+        "r2": 0.7005019042082874
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.4990918707212533
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.16241097277009464
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.14215664071292036
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.12921667393105196
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.04044157045713177
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.020013952383041593
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.0027850051635645973
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.0020641513075805367
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.0018191625533611274
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "remaining_lease_years": 12,
+        "flat_type": 8,
+        "dist_to_cbd_m": 7,
+        "flat_model": 7,
+        "sora_monthly_avg": 6,
+        "mrt_walking_distance": 3,
+        "mature_estate": 2,
+        "region": 1,
+        "storey_mid": 1
+      }
+    },
+    {
+      "config": {
+        "max_depth": 6,
+        "min_samples_leaf": 1000,
+        "min_samples_split": 500,
+        "ccp_alpha": 0.0
+      },
+      "depth": 6,
+      "leaf_count": 48,
+      "train": {
+        "mae": 71006.97116976709,
+        "mse": 9999069633.849249,
+        "rmse": 99995.34806104357,
+        "r2": 0.7004030229995903
+      },
+      "validation": {
+        "mae": 70616.99339231243,
+        "mse": 9830954911.417301,
+        "rmse": 99151.1720123232,
+        "r2": 0.7071666100214788
+      },
+      "test": {
+        "mae": 71228.5834817761,
+        "mse": 10081243278.333084,
+        "rmse": 100405.3946674833,
+        "r2": 0.7005019042082874
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.4990918707212533
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.16241097277009464
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.14215664071292036
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.12921667393105196
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.04044157045713177
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.020013952383041593
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.0027850051635645973
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.0020641513075805367
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.0018191625533611274
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "remaining_lease_years": 12,
+        "flat_type": 8,
+        "dist_to_cbd_m": 7,
+        "flat_model": 7,
+        "sora_monthly_avg": 6,
+        "mrt_walking_distance": 3,
+        "mature_estate": 2,
+        "region": 1,
+        "storey_mid": 1
+      }
+    },
+    {
+      "config": {
+        "max_depth": 6,
+        "min_samples_leaf": 2000,
+        "min_samples_split": 200,
+        "ccp_alpha": 0.0
+      },
+      "depth": 6,
+      "leaf_count": 35,
+      "train": {
+        "mae": 73235.23531119377,
+        "mse": 10809314285.029451,
+        "rmse": 103967.8521708968,
+        "r2": 0.6761260795425127
+      },
+      "validation": {
+        "mae": 72841.40767463393,
+        "mse": 10702055695.341364,
+        "rmse": 103450.74042915963,
+        "r2": 0.681219242968337
+      },
+      "test": {
+        "mae": 73883.13660397187,
+        "mse": 10953997739.152966,
+        "rmse": 104661.34787567455,
+        "r2": 0.6745737233388642
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.4973209087646134
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.16824249165695143
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.1511082748066308
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.1295575745240493
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.030149226327366843
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.01718302282173224
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.002885003396038156
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.0022244034137685626
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.001189146502095985
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.00013994778675330036
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "remaining_lease_years": 10,
+        "flat_type": 6,
+        "dist_to_cbd_m": 4,
+        "flat_model": 4,
+        "sora_monthly_avg": 4,
+        "mrt_walking_distance": 2,
+        "dist_nearest_park_m": 1,
+        "mature_estate": 1,
+        "region": 1,
+        "storey_mid": 1
+      }
+    },
+    {
+      "config": {
+        "max_depth": 6,
+        "min_samples_leaf": 2000,
+        "min_samples_split": 500,
+        "ccp_alpha": 0.0
+      },
+      "depth": 6,
+      "leaf_count": 35,
+      "train": {
+        "mae": 73235.23531119377,
+        "mse": 10809314285.029451,
+        "rmse": 103967.8521708968,
+        "r2": 0.6761260795425127
+      },
+      "validation": {
+        "mae": 72841.40767463393,
+        "mse": 10702055695.341364,
+        "rmse": 103450.74042915963,
+        "r2": 0.681219242968337
+      },
+      "test": {
+        "mae": 73883.13660397187,
+        "mse": 10953997739.152966,
+        "rmse": 104661.34787567455,
+        "r2": 0.6745737233388642
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.4973209087646134
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.16824249165695143
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.1511082748066308
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.1295575745240493
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.030149226327366843
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.01718302282173224
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.002885003396038156
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.0022244034137685626
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.001189146502095985
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.00013994778675330036
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "remaining_lease_years": 10,
+        "flat_type": 6,
+        "dist_to_cbd_m": 4,
+        "flat_model": 4,
+        "sora_monthly_avg": 4,
+        "mrt_walking_distance": 2,
+        "dist_nearest_park_m": 1,
+        "mature_estate": 1,
+        "region": 1,
+        "storey_mid": 1
+      }
+    },
+    {
+      "config": {
+        "max_depth": 5,
+        "min_samples_leaf": 1000,
+        "min_samples_split": 200,
+        "ccp_alpha": 0.0
+      },
+      "depth": 5,
+      "leaf_count": 29,
+      "train": {
+        "mae": 78790.92078753452,
+        "mse": 11974014459.670494,
+        "rmse": 109425.83999983959,
+        "r2": 0.6412287676713104
+      },
+      "validation": {
+        "mae": 78350.63211420788,
+        "mse": 11866610884.026012,
+        "rmse": 108933.97488399113,
+        "r2": 0.6465307872900842
+      },
+      "test": {
+        "mae": 79114.47184212902,
+        "mse": 12117192789.649893,
+        "rmse": 110078.12130323579,
+        "r2": 0.6400170031963286
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.5243863863729418
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.17739867896068243
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.14114112405145784
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.1018944384994289
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.03700326537169492
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.015762005948488072
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.0017694628846121174
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.0006446379106938788
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "flat_type": 6,
+        "remaining_lease_years": 6,
+        "sora_monthly_avg": 6,
+        "flat_model": 4,
+        "dist_to_cbd_m": 3,
+        "mature_estate": 1,
+        "mrt_walking_distance": 1,
+        "region": 1
+      }
+    },
+    {
+      "config": {
+        "max_depth": 5,
+        "min_samples_leaf": 1000,
+        "min_samples_split": 500,
+        "ccp_alpha": 0.0
+      },
+      "depth": 5,
+      "leaf_count": 29,
+      "train": {
+        "mae": 78790.92078753452,
+        "mse": 11974014459.670494,
+        "rmse": 109425.83999983959,
+        "r2": 0.6412287676713104
+      },
+      "validation": {
+        "mae": 78350.63211420788,
+        "mse": 11866610884.026012,
+        "rmse": 108933.97488399113,
+        "r2": 0.6465307872900842
+      },
+      "test": {
+        "mae": 79114.47184212902,
+        "mse": 12117192789.649893,
+        "rmse": 110078.12130323579,
+        "r2": 0.6400170031963286
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.5243863863729418
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.17739867896068243
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.14114112405145784
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.1018944384994289
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.03700326537169492
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.015762005948488072
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.0017694628846121174
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.0006446379106938788
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "flat_type": 6,
+        "remaining_lease_years": 6,
+        "sora_monthly_avg": 6,
+        "flat_model": 4,
+        "dist_to_cbd_m": 3,
+        "mature_estate": 1,
+        "mrt_walking_distance": 1,
+        "region": 1
+      }
+    },
+    {
+      "config": {
+        "max_depth": 5,
+        "min_samples_leaf": 2000,
+        "min_samples_split": 200,
+        "ccp_alpha": 0.0
+      },
+      "depth": 5,
+      "leaf_count": 25,
+      "train": {
+        "mae": 79559.32024734806,
+        "mse": 12231721247.165451,
+        "rmse": 110597.11229125944,
+        "r2": 0.6335072318371555
+      },
+      "validation": {
+        "mae": 79023.57185438076,
+        "mse": 12106635718.212694,
+        "rmse": 110030.15822133809,
+        "r2": 0.639381198414207
+      },
+      "test": {
+        "mae": 80041.09388752595,
+        "mse": 12407742006.826672,
+        "rmse": 111390.0444690937,
+        "r2": 0.6313852367687449
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.5307778971084703
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.17956091198295523
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.13827348850296692
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.10138906390116785
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.03217749880904616
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.014645232965640322
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.002374048919869162
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.0006524951133860149
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.00014936269649796564
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "flat_type": 6,
+        "flat_model": 4,
+        "remaining_lease_years": 4,
+        "sora_monthly_avg": 4,
+        "dist_to_cbd_m": 2,
+        "dist_nearest_park_m": 1,
+        "mature_estate": 1,
+        "mrt_walking_distance": 1,
+        "region": 1
+      }
+    },
+    {
+      "config": {
+        "max_depth": 5,
+        "min_samples_leaf": 2000,
+        "min_samples_split": 500,
+        "ccp_alpha": 0.0
+      },
+      "depth": 5,
+      "leaf_count": 25,
+      "train": {
+        "mae": 79559.32024734806,
+        "mse": 12231721247.165451,
+        "rmse": 110597.11229125944,
+        "r2": 0.6335072318371555
+      },
+      "validation": {
+        "mae": 79023.57185438076,
+        "mse": 12106635718.212694,
+        "rmse": 110030.15822133809,
+        "r2": 0.639381198414207
+      },
+      "test": {
+        "mae": 80041.09388752595,
+        "mse": 12407742006.826672,
+        "rmse": 111390.0444690937,
+        "r2": 0.6313852367687449
+      },
+      "feature_importances": [
+        {
+          "source_feature": "flat_type",
+          "feature_type": "categorical",
+          "importance": 0.5307778971084703
+        },
+        {
+          "source_feature": "region",
+          "feature_type": "categorical",
+          "importance": 0.17956091198295523
+        },
+        {
+          "source_feature": "sora_monthly_avg",
+          "feature_type": "numeric",
+          "importance": 0.13827348850296692
+        },
+        {
+          "source_feature": "remaining_lease_years",
+          "feature_type": "numeric",
+          "importance": 0.10138906390116785
+        },
+        {
+          "source_feature": "flat_model",
+          "feature_type": "categorical",
+          "importance": 0.03217749880904616
+        },
+        {
+          "source_feature": "dist_to_cbd_m",
+          "feature_type": "numeric",
+          "importance": 0.014645232965640322
+        },
+        {
+          "source_feature": "mature_estate",
+          "feature_type": "categorical",
+          "importance": 0.002374048919869162
+        },
+        {
+          "source_feature": "mrt_walking_distance",
+          "feature_type": "numeric",
+          "importance": 0.0006524951133860149
+        },
+        {
+          "source_feature": "dist_nearest_park_m",
+          "feature_type": "numeric",
+          "importance": 0.00014936269649796564
+        },
+        {
+          "source_feature": "dist_nearest_hawker_centre_m",
+          "feature_type": "numeric",
+          "importance": 0.0
+        },
+        {
+          "source_feature": "storey_mid",
+          "feature_type": "numeric",
+          "importance": 0.0
+        }
+      ],
+      "root_summary": {
+        "feature": "flat_type=3 ROOM",
+        "threshold": 0.5,
+        "rule": "flat_type = 3 ROOM",
+        "left_child_samples": 160266,
+        "right_child_samples": 51355,
+        "left_branch": "No",
+        "right_branch": "Yes"
+      },
+      "split_feature_usage": {
+        "flat_type": 6,
+        "flat_model": 4,
+        "remaining_lease_years": 4,
+        "sora_monthly_avg": 4,
+        "dist_to_cbd_m": 2,
+        "dist_nearest_park_m": 1,
+        "mature_estate": 1,
+        "mrt_walking_distance": 1,
+        "region": 1
+      }
+    }
+  ],
+  "step2_selected_teacher": {
+    "config": {
+      "max_depth": 6,
+      "min_samples_leaf": 1000,
+      "min_samples_split": 500,
+      "ccp_alpha": 0.0
+    },
+    "depth": 6,
+    "leaf_count": 48,
+    "train": {
+      "mae": 71006.97116976709,
+      "mse": 9999069633.849249,
+      "rmse": 99995.34806104357,
+      "r2": 0.7004030229995903
+    },
+    "validation": {
+      "mae": 70616.99339231243,
+      "mse": 9830954911.417301,
+      "rmse": 99151.1720123232,
+      "r2": 0.7071666100214788
+    },
+    "test": {
+      "mae": 71228.5834817761,
+      "mse": 10081243278.333084,
+      "rmse": 100405.3946674833,
+      "r2": 0.7005019042082874
+    },
+    "feature_importances": [
+      {
+        "source_feature": "flat_type",
+        "feature_type": "categorical",
+        "importance": 0.4990918707212533
+      },
+      {
+        "source_feature": "region",
+        "feature_type": "categorical",
+        "importance": 0.16241097277009464
+      },
+      {
+        "source_feature": "remaining_lease_years",
+        "feature_type": "numeric",
+        "importance": 0.14215664071292036
+      },
+      {
+        "source_feature": "sora_monthly_avg",
+        "feature_type": "numeric",
+        "importance": 0.12921667393105196
+      },
+      {
+        "source_feature": "flat_model",
+        "feature_type": "categorical",
+        "importance": 0.04044157045713177
+      },
+      {
+        "source_feature": "dist_to_cbd_m",
+        "feature_type": "numeric",
+        "importance": 0.020013952383041593
+      },
+      {
+        "source_feature": "storey_mid",
+        "feature_type": "numeric",
+        "importance": 0.0027850051635645973
+      },
+      {
+        "source_feature": "mrt_walking_distance",
+        "feature_type": "numeric",
+        "importance": 0.0020641513075805367
+      },
+      {
+        "source_feature": "mature_estate",
+        "feature_type": "categorical",
+        "importance": 0.0018191625533611274
+      },
+      {
+        "source_feature": "dist_nearest_hawker_centre_m",
+        "feature_type": "numeric",
+        "importance": 0.0
+      },
+      {
+        "source_feature": "dist_nearest_park_m",
+        "feature_type": "numeric",
+        "importance": 0.0
+      }
+    ],
+    "root_summary": {
+      "feature": "flat_type=3 ROOM",
+      "threshold": 0.5,
+      "rule": "flat_type = 3 ROOM",
+      "left_child_samples": 160266,
+      "right_child_samples": 51355,
+      "left_branch": "No",
+      "right_branch": "Yes"
+    },
+    "split_feature_usage": {
+      "remaining_lease_years": 12,
+      "flat_type": 8,
+      "dist_to_cbd_m": 7,
+      "flat_model": 7,
+      "sora_monthly_avg": 6,
+      "mrt_walking_distance": 3,
+      "mature_estate": 2,
+      "region": 1,
+      "storey_mid": 1
+    }
+  },
+  "step3_teacher_interpretation": {
+    "final_model_role": "teacher_tree",
+    "depth": 6,
+    "leaf_count": 48,
+    "root_summary": {
+      "feature": "flat_type=3 ROOM",
+      "threshold": 0.5,
+      "rule": "flat_type = 3 ROOM",
+      "left_child_samples": 160266,
+      "right_child_samples": 51355,
+      "left_branch": "No",
+      "right_branch": "Yes"
+    },
+    "split_feature_usage": {
+      "remaining_lease_years": 12,
+      "flat_type": 8,
+      "dist_to_cbd_m": 7,
+      "flat_model": 7,
+      "sora_monthly_avg": 6,
+      "mrt_walking_distance": 3,
+      "mature_estate": 2,
+      "region": 1,
+      "storey_mid": 1
+    },
+    "leaf_rules": [
+      {
+        "node_id": 33,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years <= 86.0 AND region = OCR",
+        "samples": 34600,
+        "prediction": 407027.81523121387
+      },
+      {
+        "node_id": 36,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years <= 88.1 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 25370,
+        "prediction": 501332.8670082775
+      },
+      {
+        "node_id": 48,
+        "path": "sora_monthly_avg > 1.703 AND region = OCR",
+        "samples": 24371,
+        "prediction": 567886.5953387222
+      },
+      {
+        "node_id": 34,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years > 86.0 AND region = OCR",
+        "samples": 17137,
+        "prediction": 488106.9233821556
+      },
+      {
+        "node_id": 68,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m > 2,703 AND mrt_walking_distance > 719 AND flat_type = 3 ROOM AND mature_estate = Mature",
+        "samples": 10810,
+        "prediction": 314329.3694727105
+      },
+      {
+        "node_id": 51,
+        "path": "sora_monthly_avg > 1.703 AND remaining_lease_years <= 84.7 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 9898,
+        "prediction": 636873.4728227925
+      },
+      {
+        "node_id": 67,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m > 2,703 AND mrt_walking_distance <= 719 AND flat_type = 3 ROOM AND mature_estate = Mature",
+        "samples": 8404,
+        "prediction": 339980.46275583055
+      },
+      {
+        "node_id": 64,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m > 2,703 AND flat_type = 3 ROOM AND mature_estate not in {Mature} AND flat_model not in {Standard}",
+        "samples": 6819,
+        "prediction": 298038.2190937087
+      },
+      {
+        "node_id": 37,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years > 88.1 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 5259,
+        "prediction": 648773.262597452
+      },
+      {
+        "node_id": 41,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years <= 78.0 AND dist_to_cbd_m > 13,446 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 4567,
+        "prediction": 648645.8611780162
+      },
+      {
+        "node_id": 52,
+        "path": "sora_monthly_avg > 1.703 AND remaining_lease_years > 84.7 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 3829,
+        "prediction": 768638.6774614782
+      },
+      {
+        "node_id": 78,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg > 1.703 AND mrt_walking_distance > 718 AND flat_type = 3 ROOM AND flat_model = New Gen",
+        "samples": 3471,
+        "prediction": 387223.3661768943
+      },
+      {
+        "node_id": 10,
+        "path": "remaining_lease_years <= 70.0 AND flat_type = 4 ROOM AND region not in {OCR} AND flat_model = Standard",
+        "samples": 2945,
+        "prediction": 489930.10288624786
+      },
+      {
+        "node_id": 74,
+        "path": "remaining_lease_years in (48.5, 77.0] AND sora_monthly_avg > 1.703 AND mrt_walking_distance <= 718 AND flat_type = 3 ROOM AND mature_estate = Mature",
+        "samples": 2920,
+        "prediction": 428724.71849315066
+      },
+      {
+        "node_id": 22,
+        "path": "remaining_lease_years > 70.0 AND sora_monthly_avg <= 1.607 AND storey_mid <= 12.5 AND flat_type not in {3 ROOM} AND region not in {OCR} AND flat_model = Model A Series",
+        "samples": 2785,
+        "prediction": 655680.6926391382
+      },
+      {
+        "node_id": 65,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m > 2,703 AND flat_type = 3 ROOM AND mature_estate not in {Mature} AND flat_model = Standard",
+        "samples": 2619,
+        "prediction": 268947.13096601755
+      },
+      {
+        "node_id": 40,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years <= 78.0 AND dist_to_cbd_m <= 13,446 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 2577,
+        "prediction": 747984.9363601087
+      },
+      {
+        "node_id": 6,
+        "path": "remaining_lease_years <= 70.0 AND flat_type not in {3 ROOM, 5 ROOM} AND region not in {OCR} AND flat_model not in {New Gen, Standard}",
+        "samples": 2341,
+        "prediction": 720771.5288338317
+      },
+      {
+        "node_id": 20,
+        "path": "remaining_lease_years > 84.0 AND sora_monthly_avg <= 1.607 AND flat_type not in {3 ROOM} AND region not in {OCR} AND flat_model not in {Model A Series}",
+        "samples": 2226,
+        "prediction": 919641.1181491464
+      },
+      {
+        "node_id": 23,
+        "path": "remaining_lease_years > 70.0 AND sora_monthly_avg <= 1.607 AND storey_mid > 12.5 AND flat_type not in {3 ROOM} AND region not in {OCR} AND flat_model = Model A Series",
+        "samples": 2205,
+        "prediction": 761486.8272108843
+      },
+      {
+        "node_id": 94,
+        "path": "remaining_lease_years > 77.0 AND dist_to_cbd_m > 14,382 AND sora_monthly_avg > 1.607 AND flat_type = 3 ROOM",
+        "samples": 1910,
+        "prediction": 461982.1743455497
+      },
+      {
+        "node_id": 56,
+        "path": "sora_monthly_avg > 1.703 AND remaining_lease_years <= 74.0 AND dist_to_cbd_m > 13,579 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 1883,
+        "prediction": 822433.7265002655
+      },
+      {
+        "node_id": 19,
+        "path": "remaining_lease_years in (70.0, 84.0] AND sora_monthly_avg <= 1.607 AND flat_type not in {3 ROOM} AND region not in {OCR} AND flat_model not in {Model A Series}",
+        "samples": 1767,
+        "prediction": 796302.324278438
+      },
+      {
+        "node_id": 80,
+        "path": "remaining_lease_years <= 53.6 AND sora_monthly_avg > 1.703 AND mrt_walking_distance > 718 AND flat_type = 3 ROOM AND flat_model = Standard",
+        "samples": 1744,
+        "prediction": 343989.3979357798
+      },
+      {
+        "node_id": 43,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years > 78.0 AND dist_to_cbd_m <= 15,024 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 1662,
+        "prediction": 606661.8814681107
+      },
+      {
+        "node_id": 44,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years > 78.0 AND dist_to_cbd_m > 15,024 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 1619,
+        "prediction": 539054.0895614577
+      },
+      {
+        "node_id": 27,
+        "path": "remaining_lease_years in (70.0, 90.0] AND sora_monthly_avg > 1.607 AND flat_type not in {3 ROOM} AND region not in {OCR} AND flat_model = Model A Series",
+        "samples": 1599,
+        "prediction": 833373.8642901813
+      },
+      {
+        "node_id": 49,
+        "path": "sora_monthly_avg > 1.703 AND flat_type = 2 ROOM AND region = OCR",
+        "samples": 1509,
+        "prediction": 339248.6090125911
+      },
+      {
+        "node_id": 84,
+        "path": "remaining_lease_years > 77.0 AND dist_to_cbd_m <= 10,800 AND sora_monthly_avg <= 1.607 AND flat_type = 3 ROOM",
+        "samples": 1445,
+        "prediction": 547554.7494809688
+      },
+      {
+        "node_id": 90,
+        "path": "remaining_lease_years > 93.0 AND dist_to_cbd_m in (10,800, 14,812] AND sora_monthly_avg <= 1.607 AND flat_type = 3 ROOM",
+        "samples": 1423,
+        "prediction": 373695.7182009838
+      },
+      {
+        "node_id": 25,
+        "path": "remaining_lease_years > 70.0 AND sora_monthly_avg > 1.607 AND flat_type not in {3 ROOM} AND region not in {OCR} AND flat_model not in {Model A Series}",
+        "samples": 1383,
+        "prediction": 1046139.6442516269
+      },
+      {
+        "node_id": 93,
+        "path": "remaining_lease_years > 77.0 AND dist_to_cbd_m in (10,800, 14,382] AND sora_monthly_avg > 1.607 AND flat_type = 3 ROOM",
+        "samples": 1272,
+        "prediction": 494479.0566037736
+      },
+      {
+        "node_id": 85,
+        "path": "remaining_lease_years > 77.0 AND dist_to_cbd_m <= 10,800 AND sora_monthly_avg > 1.607 AND flat_type = 3 ROOM",
+        "samples": 1213,
+        "prediction": 664132.769991756
+      },
+      {
+        "node_id": 14,
+        "path": "remaining_lease_years <= 70.0 AND sora_monthly_avg <= 1.703 AND mrt_walking_distance > 692 AND flat_type = 5 ROOM AND region not in {OCR}",
+        "samples": 1199,
+        "prediction": 678280.7456213512
+      },
+      {
+        "node_id": 7,
+        "path": "remaining_lease_years <= 70.0 AND flat_type not in {3 ROOM, 5 ROOM} AND region not in {OCR} AND flat_model = New Gen",
+        "samples": 1181,
+        "prediction": 524661.0414902625
+      },
+      {
+        "node_id": 28,
+        "path": "remaining_lease_years > 90.0 AND sora_monthly_avg > 1.607 AND flat_type not in {3 ROOM} AND region not in {OCR} AND flat_model = Model A Series",
+        "samples": 1160,
+        "prediction": 945955.1405172413
+      },
+      {
+        "node_id": 13,
+        "path": "remaining_lease_years <= 70.0 AND sora_monthly_avg <= 1.703 AND mrt_walking_distance <= 692 AND flat_type = 5 ROOM AND region not in {OCR}",
+        "samples": 1103,
+        "prediction": 763584.7724388032
+      },
+      {
+        "node_id": 77,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg > 1.703 AND mrt_walking_distance > 718 AND flat_type = 3 ROOM AND flat_model not in {New Gen, Standard}",
+        "samples": 1081,
+        "prediction": 415998.2590194265
+      },
+      {
+        "node_id": 91,
+        "path": "remaining_lease_years > 93.0 AND dist_to_cbd_m > 14,812 AND sora_monthly_avg <= 1.607 AND flat_type = 3 ROOM",
+        "samples": 1081,
+        "prediction": 350642.2756706753
+      },
+      {
+        "node_id": 9,
+        "path": "remaining_lease_years <= 70.0 AND region not in {OCR} AND flat_model = Standard",
+        "samples": 1068,
+        "prediction": 331189.8698501873
+      },
+      {
+        "node_id": 73,
+        "path": "remaining_lease_years in (48.5, 77.0] AND sora_monthly_avg > 1.703 AND mrt_walking_distance <= 718 AND flat_type = 3 ROOM AND mature_estate not in {Mature}",
+        "samples": 1046,
+        "prediction": 392954.44550669217
+      },
+      {
+        "node_id": 61,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m <= 2,703 AND flat_type = 3 ROOM",
+        "samples": 1041,
+        "prediction": 423534.74543707975
+      },
+      {
+        "node_id": 88,
+        "path": "remaining_lease_years in (77.0, 93.0] AND dist_to_cbd_m > 10,800 AND sora_monthly_avg <= 1.607 AND flat_type = 3 ROOM",
+        "samples": 1029,
+        "prediction": 422791.4149659864
+      },
+      {
+        "node_id": 71,
+        "path": "remaining_lease_years <= 48.5 AND sora_monthly_avg > 1.703 AND mrt_walking_distance <= 718 AND flat_type = 3 ROOM",
+        "samples": 1020,
+        "prediction": 371318.17156862747
+      },
+      {
+        "node_id": 15,
+        "path": "remaining_lease_years <= 70.0 AND sora_monthly_avg > 1.703 AND flat_type = 5 ROOM AND region not in {OCR}",
+        "samples": 1019,
+        "prediction": 847118.3366045143
+      },
+      {
+        "node_id": 81,
+        "path": "remaining_lease_years in (53.6, 77.0] AND sora_monthly_avg > 1.703 AND mrt_walking_distance > 718 AND flat_type = 3 ROOM AND flat_model = Standard",
+        "samples": 1007,
+        "prediction": 364951.5352532274
+      },
+      {
+        "node_id": 57,
+        "path": "sora_monthly_avg > 1.703 AND remaining_lease_years > 74.0 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 1003,
+        "prediction": 736760.4087736789
+      },
+      {
+        "node_id": 55,
+        "path": "sora_monthly_avg > 1.703 AND remaining_lease_years <= 74.0 AND dist_to_cbd_m <= 13,579 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 1001,
+        "prediction": 928040.8201798202
+      }
+    ],
+    "top_leaf_rules_by_samples": [
+      {
+        "node_id": 33,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years <= 86.0 AND region = OCR",
+        "samples": 34600,
+        "prediction": 407027.81523121387
+      },
+      {
+        "node_id": 36,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years <= 88.1 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 25370,
+        "prediction": 501332.8670082775
+      },
+      {
+        "node_id": 48,
+        "path": "sora_monthly_avg > 1.703 AND region = OCR",
+        "samples": 24371,
+        "prediction": 567886.5953387222
+      },
+      {
+        "node_id": 34,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years > 86.0 AND region = OCR",
+        "samples": 17137,
+        "prediction": 488106.9233821556
+      },
+      {
+        "node_id": 68,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m > 2,703 AND mrt_walking_distance > 719 AND flat_type = 3 ROOM AND mature_estate = Mature",
+        "samples": 10810,
+        "prediction": 314329.3694727105
+      },
+      {
+        "node_id": 51,
+        "path": "sora_monthly_avg > 1.703 AND remaining_lease_years <= 84.7 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 9898,
+        "prediction": 636873.4728227925
+      },
+      {
+        "node_id": 67,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m > 2,703 AND mrt_walking_distance <= 719 AND flat_type = 3 ROOM AND mature_estate = Mature",
+        "samples": 8404,
+        "prediction": 339980.46275583055
+      },
+      {
+        "node_id": 64,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg <= 1.703 AND dist_to_cbd_m > 2,703 AND flat_type = 3 ROOM AND mature_estate not in {Mature} AND flat_model not in {Standard}",
+        "samples": 6819,
+        "prediction": 298038.2190937087
+      },
+      {
+        "node_id": 37,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years > 88.1 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 5259,
+        "prediction": 648773.262597452
+      },
+      {
+        "node_id": 41,
+        "path": "sora_monthly_avg <= 1.703 AND remaining_lease_years <= 78.0 AND dist_to_cbd_m > 13,446 AND flat_type = EXECUTIVE AND region = OCR",
+        "samples": 4567,
+        "prediction": 648645.8611780162
+      },
+      {
+        "node_id": 52,
+        "path": "sora_monthly_avg > 1.703 AND remaining_lease_years > 84.7 AND flat_type = 5 ROOM AND region = OCR",
+        "samples": 3829,
+        "prediction": 768638.6774614782
+      },
+      {
+        "node_id": 78,
+        "path": "remaining_lease_years <= 77.0 AND sora_monthly_avg > 1.703 AND mrt_walking_distance > 718 AND flat_type = 3 ROOM AND flat_model = New Gen",
+        "samples": 3471,
+        "prediction": 387223.3661768943
+      }
+    ],
+    "interesting_branches": [
+      {
+        "name": "non_three_room_branch",
+        "title": "Non-3-Room Branch",
+        "node_id": 1,
+        "path": "flat_type not in {3 ROOM}",
+        "dot_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/non_three_room_branch.dot",
+        "png_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/non_three_room_branch.png"
+      },
+      {
+        "name": "three_room_branch",
+        "title": "3-Room Branch",
+        "node_id": 58,
+        "path": "flat_type = 3 ROOM",
+        "dot_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/three_room_branch.dot",
+        "png_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/three_room_branch.png"
+      },
+      {
+        "name": "older_lease_three_room_branch",
+        "title": "Older-Lease 3-Room Branch",
+        "node_id": 59,
+        "path": "remaining_lease_years <= 77.0 AND flat_type = 3 ROOM",
+        "dot_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/older_lease_three_room_branch.dot",
+        "png_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/older_lease_three_room_branch.png"
+      },
+      {
+        "name": "longer_lease_three_room_branch",
+        "title": "Longer-Lease 3-Room Branch",
+        "node_id": 82,
+        "path": "remaining_lease_years > 77.0 AND flat_type = 3 ROOM",
+        "dot_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/longer_lease_three_room_branch.dot",
+        "png_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches/longer_lease_three_room_branch.png"
+      }
+    ]
+  },
+  "artifacts": {
+    "figures_dir": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures",
+    "branch_figures_dir": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/teacher_branches",
+    "baseline_dot_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/01_step1_naive_tree_baseline.dot",
+    "baseline_png_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/01_step1_naive_tree_baseline.png",
+    "teacher_dot_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/02_step2_teacher_tree.dot",
+    "teacher_png_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/02_step2_teacher_tree.png",
+    "teacher_text_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/02_step2_teacher_tree.txt",
+    "teacher_importance_png_path": "/Users/haydn/Library/CloudStorage/OneDrive-Personal/Documents/NUS/Y3S2/CS3244/Project/CS3244_group-3_ResalePriceModeling/results/DT_models/figures/02_step2_teacher_feature_importance.png"
+  }
+}

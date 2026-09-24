@@ -1,0 +1,142 @@
+|--- flat_type=3 ROOM <= 0.5
+|   |--- region=OCR <= 0.5
+|   |   |--- remaining_lease_years <= 70.0
+|   |   |   |--- flat_type=5 ROOM <= 0.5
+|   |   |   |   |--- flat_model=Standard <= 0.5
+|   |   |   |   |   |--- flat_model=New Gen <= 0.5
+|   |   |   |   |   |   |--- value: [720771.5]
+|   |   |   |   |   |--- flat_model=New Gen >  0.5
+|   |   |   |   |   |   |--- value: [524661.0]
+|   |   |   |   |--- flat_model=Standard >  0.5
+|   |   |   |   |   |--- flat_type=4 ROOM <= 0.5
+|   |   |   |   |   |   |--- value: [331189.9]
+|   |   |   |   |   |--- flat_type=4 ROOM >  0.5
+|   |   |   |   |   |   |--- value: [489930.1]
+|   |   |   |--- flat_type=5 ROOM >  0.5
+|   |   |   |   |--- sora_monthly_avg <= 1.7
+|   |   |   |   |   |--- mrt_walking_distance <= 691.5
+|   |   |   |   |   |   |--- value: [763584.8]
+|   |   |   |   |   |--- mrt_walking_distance >  691.5
+|   |   |   |   |   |   |--- value: [678280.7]
+|   |   |   |   |--- sora_monthly_avg >  1.7
+|   |   |   |   |   |--- value: [847118.3]
+|   |   |--- remaining_lease_years >  70.0
+|   |   |   |--- sora_monthly_avg <= 1.6
+|   |   |   |   |--- flat_model=Model A Series <= 0.5
+|   |   |   |   |   |--- remaining_lease_years <= 84.0
+|   |   |   |   |   |   |--- value: [796302.3]
+|   |   |   |   |   |--- remaining_lease_years >  84.0
+|   |   |   |   |   |   |--- value: [919641.1]
+|   |   |   |   |--- flat_model=Model A Series >  0.5
+|   |   |   |   |   |--- storey_mid <= 12.5
+|   |   |   |   |   |   |--- value: [655680.7]
+|   |   |   |   |   |--- storey_mid >  12.5
+|   |   |   |   |   |   |--- value: [761486.8]
+|   |   |   |--- sora_monthly_avg >  1.6
+|   |   |   |   |--- flat_model=Model A Series <= 0.5
+|   |   |   |   |   |--- value: [1046139.6]
+|   |   |   |   |--- flat_model=Model A Series >  0.5
+|   |   |   |   |   |--- remaining_lease_years <= 90.0
+|   |   |   |   |   |   |--- value: [833373.9]
+|   |   |   |   |   |--- remaining_lease_years >  90.0
+|   |   |   |   |   |   |--- value: [945955.1]
+|   |--- region=OCR >  0.5
+|   |   |--- sora_monthly_avg <= 1.7
+|   |   |   |--- flat_type=EXECUTIVE <= 0.5
+|   |   |   |   |--- flat_type=5 ROOM <= 0.5
+|   |   |   |   |   |--- remaining_lease_years <= 86.0
+|   |   |   |   |   |   |--- value: [407027.8]
+|   |   |   |   |   |--- remaining_lease_years >  86.0
+|   |   |   |   |   |   |--- value: [488106.9]
+|   |   |   |   |--- flat_type=5 ROOM >  0.5
+|   |   |   |   |   |--- remaining_lease_years <= 88.1
+|   |   |   |   |   |   |--- value: [501332.9]
+|   |   |   |   |   |--- remaining_lease_years >  88.1
+|   |   |   |   |   |   |--- value: [648773.3]
+|   |   |   |--- flat_type=EXECUTIVE >  0.5
+|   |   |   |   |--- remaining_lease_years <= 78.0
+|   |   |   |   |   |--- dist_to_cbd_m <= 13446.1
+|   |   |   |   |   |   |--- value: [747984.9]
+|   |   |   |   |   |--- dist_to_cbd_m >  13446.1
+|   |   |   |   |   |   |--- value: [648645.9]
+|   |   |   |   |--- remaining_lease_years >  78.0
+|   |   |   |   |   |--- dist_to_cbd_m <= 15023.6
+|   |   |   |   |   |   |--- value: [606661.9]
+|   |   |   |   |   |--- dist_to_cbd_m >  15023.6
+|   |   |   |   |   |   |--- value: [539054.1]
+|   |   |--- sora_monthly_avg >  1.7
+|   |   |   |--- flat_type=EXECUTIVE <= 0.5
+|   |   |   |   |--- flat_type=5 ROOM <= 0.5
+|   |   |   |   |   |--- flat_type=2 ROOM <= 0.5
+|   |   |   |   |   |   |--- value: [567886.6]
+|   |   |   |   |   |--- flat_type=2 ROOM >  0.5
+|   |   |   |   |   |   |--- value: [339248.6]
+|   |   |   |   |--- flat_type=5 ROOM >  0.5
+|   |   |   |   |   |--- remaining_lease_years <= 84.7
+|   |   |   |   |   |   |--- value: [636873.5]
+|   |   |   |   |   |--- remaining_lease_years >  84.7
+|   |   |   |   |   |   |--- value: [768638.7]
+|   |   |   |--- flat_type=EXECUTIVE >  0.5
+|   |   |   |   |--- remaining_lease_years <= 74.0
+|   |   |   |   |   |--- dist_to_cbd_m <= 13579.4
+|   |   |   |   |   |   |--- value: [928040.8]
+|   |   |   |   |   |--- dist_to_cbd_m >  13579.4
+|   |   |   |   |   |   |--- value: [822433.7]
+|   |   |   |   |--- remaining_lease_years >  74.0
+|   |   |   |   |   |--- value: [736760.4]
+|--- flat_type=3 ROOM >  0.5
+|   |--- remaining_lease_years <= 77.0
+|   |   |--- sora_monthly_avg <= 1.7
+|   |   |   |--- dist_to_cbd_m <= 2702.7
+|   |   |   |   |--- value: [423534.7]
+|   |   |   |--- dist_to_cbd_m >  2702.7
+|   |   |   |   |--- mature_estate=Mature <= 0.5
+|   |   |   |   |   |--- flat_model=Standard <= 0.5
+|   |   |   |   |   |   |--- value: [298038.2]
+|   |   |   |   |   |--- flat_model=Standard >  0.5
+|   |   |   |   |   |   |--- value: [268947.1]
+|   |   |   |   |--- mature_estate=Mature >  0.5
+|   |   |   |   |   |--- mrt_walking_distance <= 719.0
+|   |   |   |   |   |   |--- value: [339980.5]
+|   |   |   |   |   |--- mrt_walking_distance >  719.0
+|   |   |   |   |   |   |--- value: [314329.4]
+|   |   |--- sora_monthly_avg >  1.7
+|   |   |   |--- mrt_walking_distance <= 717.5
+|   |   |   |   |--- remaining_lease_years <= 48.5
+|   |   |   |   |   |--- value: [371318.2]
+|   |   |   |   |--- remaining_lease_years >  48.5
+|   |   |   |   |   |--- mature_estate=Mature <= 0.5
+|   |   |   |   |   |   |--- value: [392954.4]
+|   |   |   |   |   |--- mature_estate=Mature >  0.5
+|   |   |   |   |   |   |--- value: [428724.7]
+|   |   |   |--- mrt_walking_distance >  717.5
+|   |   |   |   |--- flat_model=Standard <= 0.5
+|   |   |   |   |   |--- flat_model=New Gen <= 0.5
+|   |   |   |   |   |   |--- value: [415998.3]
+|   |   |   |   |   |--- flat_model=New Gen >  0.5
+|   |   |   |   |   |   |--- value: [387223.4]
+|   |   |   |   |--- flat_model=Standard >  0.5
+|   |   |   |   |   |--- remaining_lease_years <= 53.6
+|   |   |   |   |   |   |--- value: [343989.4]
+|   |   |   |   |   |--- remaining_lease_years >  53.6
+|   |   |   |   |   |   |--- value: [364951.5]
+|   |--- remaining_lease_years >  77.0
+|   |   |--- dist_to_cbd_m <= 10799.7
+|   |   |   |--- sora_monthly_avg <= 1.6
+|   |   |   |   |--- value: [547554.7]
+|   |   |   |--- sora_monthly_avg >  1.6
+|   |   |   |   |--- value: [664132.8]
+|   |   |--- dist_to_cbd_m >  10799.7
+|   |   |   |--- sora_monthly_avg <= 1.6
+|   |   |   |   |--- remaining_lease_years <= 93.0
+|   |   |   |   |   |--- value: [422791.4]
+|   |   |   |   |--- remaining_lease_years >  93.0
+|   |   |   |   |   |--- dist_to_cbd_m <= 14812.3
+|   |   |   |   |   |   |--- value: [373695.7]
+|   |   |   |   |   |--- dist_to_cbd_m >  14812.3
+|   |   |   |   |   |   |--- value: [350642.3]
+|   |   |   |--- sora_monthly_avg >  1.6
+|   |   |   |   |--- dist_to_cbd_m <= 14382.0
+|   |   |   |   |   |--- value: [494479.1]
+|   |   |   |   |--- dist_to_cbd_m >  14382.0
+|   |   |   |   |   |--- value: [461982.2]
