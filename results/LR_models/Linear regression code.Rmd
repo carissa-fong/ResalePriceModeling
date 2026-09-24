@@ -1,0 +1,470 @@
+---
+title: "CS3244 Linear Regression Pipeline"
+author: "A0272756U"
+date: "2026-04-10"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(caret)
+library(dplyr)
+library(rlang)
+library(tidyr)
+```
+
+## 1. Data Preperation
+
+```{r}
+# Load data
+data <- read.csv("C:/Users/Study/OneDrive - National University of Singapore/Desktop/Y3S2/CS3244/CS3244_group-3_ResalePriceModeling/data/hdb_resale_final_modeling_dataset_2015_2025.csv")
+
+# Clean data for modeling
+data_modelling <- data %>%
+  mutate(across(where(is.character), as.factor)) %>%
+  drop_na() %>%
+  dplyr::select(-resale_price, -region, -town, -flat_model_raw) # Exclude unused high-cardinality/redundant columns
+```
+
+## 2. Baseline Establishment
+
+**Action:** Build a baseline model using only original structural features.
+
+**Metrics:** Adjusted $R^2$ and exact-dollar RMSE.
+
+```{r}
+# Fit Baseline Model
+baseline_model <- lm(log_resale_price ~ floor_area_sqm + remaining_lease_years + storey_mid + flat_type + flat_model, data = data_modelling)
+
+# Extract Adjusted R-Squared
+adj_r_sq_base <- summary(baseline_model)$adj.r.squared
+
+# Calculate exact-dollar metrics
+preds_actual_base <- exp(predict(baseline_model, data_modelling))
+actuals_base <- exp(data_modelling$log_resale_price)
+
+rmse_base <- sqrt(mean((actuals_base - preds_actual_base)^2))
+# NEW: Mean Bias Error (Actual - Predicted)
+mbe_base <- mean(actuals_base - preds_actual_base)
+
+cat(sprintf("Baseline Adjusted R-squared: %.4f\n", adj_r_sq_base))
+cat(sprintf("Baseline RMSE: $%.2f\n", rmse_base))
+cat(sprintf("Baseline MBE: $%.2f\n", mbe_base))
+```
+
+## 3. Model Adequacy Checks
+
+```{r}
+# 1. Correlation for Numerical Features Only
+numeric_data <- data_modelling %>% 
+  dplyr::select(where(is.numeric))
+
+# Visual correlation matrix (using GGally)
+ggcorr(numeric_data, label = TRUE, label_size = 3, hjust = 1, layout.exp = 2)
+
+# 2. Multicollinearity (Handles both Categorical and Numerical)
+# Fit a base linear model. We exclude log_resale_price to prevent target leakage.
+baseline_model <- lm(log_resale_price ~ . , data = data_modelling)
+
+# Calculate GVIF using the car package
+# Features with GVIF^(1/(2*Df)) > 2 to 2.5 indicate high multicollinearity
+vif_results <- car::vif(baseline_model)
+print(vif_results)
+```
+
+## Data cleaning for modelling
+
+```{r}
+data_modelling <- data %>%
+  
+  # 1. Convert character strings to factors (critical for regression dummy variables)
+  
+  mutate(across(where(is.character), as.factor)) %>%
+
+  # 2. Drop rows with NA values in the distance columns
+  drop_na() %>%
+  dplyr::select(-resale_price, -region, -town, -flat_model_raw)
+  
+# Check the structure to ensure factor levels are set correctly
+glimpse(data_modelling)
+```
+
+## Checking model assumptions
+
+(Before training)
+
+1.  Check that response has a normal distribution (qqplot + qqnorm)
+2.  check GVIF for multicollinearity
+
+### 3.1 Normality of resale price distribution
+
+```{r resale histogram plot}
+p_orig <- ggplot(data, aes(x = resale_price)) +
+  geom_histogram(bins = 30, fill = "steelblue", colour = "white") +
+  labs(title = "Original resale price", x = "Price (SGD)", y = "Count") +
+  theme_minimal()
+
+p_log10 <- ggplot(data, aes(x = log(resale_price))) +
+  geom_histogram(bins = 30, fill = "steelblue", colour = "white") +
+  labs(title = "Log Transformed price", x = "log(Price)", y = "Count") +
+  theme_minimal()
+
+p_orig + p_log10
+```
+
+### 3.2 Checking for multicollinearity
+
+#### 3.2.1 Correlation matrix (Numerical vs Numerical)
+
+```{r}
+# 1. Correlation for Numerical Features Only
+numeric_data <- data_modelling %>% 
+  dplyr::select(where(is.numeric))
+
+# Visual correlation matrix (using GGally)
+ggcorr(numeric_data, label = TRUE, label_size = 3, hjust = 1, layout.exp = 2)
+
+# 2. Multicollinearity (Handles both Categorical and Numerical)
+# Fit a base linear model. We exclude log_resale_price to prevent target leakage.
+baseline_model <- lm(log_resale_price ~ . , data = data_modelling)
+
+```
+
+#### 3.2.2 GVIF (Generalised multicollinearity check)
+
+```{r}
+# Calculate GVIF using the car package
+# Features with GVIF^(1/(2*Df)) > 2 to 2.5 indicate high multicollinearity
+vif_results <- car::vif(baseline_model)
+print(vif_results)
+```
+
+#### 3.2.3 Continuous variable correlation check with $R^2$
+
+```{r}
+# Define your continuous target variable
+cont_target <- "floor_area_sqm"
+
+# Define all the categorical features you want to test against it
+cat_features <- c("flat_type", "flat_model", "region_URA", "mature_estate")
+
+cat(sprintf("\n--- Collinearity Diagnostics for '%s' ---\n", cont_target))
+cat(sprintf("%-15s | %-15s | %-10s\n", "Feature", "Variance Expl.", "VIF Equivalent"))
+cat(paste(rep("-", 48), collapse=""), "\n")
+
+for (col in cat_features) {
+  # Dynamically construct the formula
+  formula_str <- paste(cont_target, "~", col)
+  
+  # Fit the model and suppress any singular fit warnings
+  model <- suppressWarnings(lm(as.formula(formula_str), data = data_modelling))
+  
+  # Extract the R-squared value
+  r_sq <- summary(model)$r.squared
+  
+  # Calculate VIF (handling the edge case of perfect collinearity preventing division by zero)
+  if (r_sq >= 0.999) {
+    vif_val <- Inf
+  } else {
+    vif_val <- 1 / (1 - r_sq)
+  }
+  
+  # Output the formatted row
+  cat(sprintf("%-15s | %.3f (%.1f%%)   | %.2f\n", col, r_sq, r_sq * 100, vif_val))
+}
+```
+
+#### 3.2.4 Categorical variable correlation check
+
+```{r}
+# 1. Define Cramer's V (Categorical vs Categorical) with Bias Correction
+cramers_v <- function(x, y) {
+  # Remove missing values to prevent table errors
+  valid_idx <- complete.cases(x, y)
+  x <- as.factor(x[valid_idx])
+  y <- as.factor(y[valid_idx])
+  
+  tbl <- table(x, y)
+  
+  # Suppress warnings for expected counts (safe due to massive N)
+  chi2 <- suppressWarnings(chisq.test(tbl, correct = FALSE)$statistic)
+  
+  n <- sum(tbl)
+  r <- nrow(tbl)
+  k <- ncol(tbl)
+  
+  # Apply bias correction
+  phi2 <- chi2 / n
+  phi2corr <- max(0, phi2 - ((k - 1) * (r - 1)) / (n - 1))
+  rcorr <- r - ((r - 1)^2) / (n - 1)
+  kcorr <- k - ((k - 1)^2) / (n - 1)
+  
+  cv <- sqrt(phi2corr / min((kcorr - 1), (rcorr - 1)))
+  return(as.numeric(cv))
+}
+
+# Run tests for categorical features
+cat_features <- c("mature_estate", "flat_type")
+cat("\n--- Cramer's V (Categorical vs region_URA) ---\n")
+
+for (col in cat_features) {
+  # CHANGED: Using data_modelling instead of df
+  score <- cramers_v(data$region_URA, data[[col]])
+  cat(sprintf("region_URA vs %s: %.3f\n", col, score))
+}
+
+
+# 2. Define Eta-Squared (Categorical vs Continuous)
+eta_squared <- function(cat_col_name, cont_col_name, data) {
+  # Create formula: continuous ~ categorical
+  formula_str <- paste(cont_col_name, "~", cat_col_name)
+  
+  # Fit ANOVA model
+  model <- aov(as.formula(formula_str), data = data)
+  aov_table <- summary(model)[[1]]
+  
+  # Calculate Eta-Squared: SS(Between) / SS(Total)
+  ss_between <- aov_table$`Sum Sq`[1]
+  ss_residuals <- aov_table$`Sum Sq`[2]
+  ss_total <- ss_between + ss_residuals
+  
+  eta2 <- ss_between / ss_total
+  return(eta2)
+}
+
+# Run tests for continuous features (The suspected spatial conflict)
+cont_features <- c("dist_to_cbd_m", "mrt_walking_distance", "floor_area_sqm")
+cat("\n--- Eta-Squared (Continuous vs region_URA) ---\n")
+
+for (col in cont_features) {
+  # CHANGED: Passing data_modelling instead of df
+  score <- eta_squared("region_URA", col, data)
+  cat(sprintf("region_URA vs %s: %.3f\n", col, score))
+}
+```
+
+**Craimer V thesholds:**
+
+0.00 to 0.29 (Safe Zone)
+
+0.30 to 0.59 (Warning Zone - Moderate Collinearity)
+
+0.60 to 1.00 (Danger Zone - Severe Collinearity)
+
+2\. Eta-Squared ($\eta^2$) (Categorical vs. Continuous)
+
+Eta-squared represents the exact percentage of variance explained (e.g., 0.14 = 14%).
+
+-   **\~ 0.01 (1%):** Small effect
+
+-   **\~ 0.06 (6%):** Medium effect
+
+-   **\> 0.14 (14%+):** Large effect
+
+verdict:
+
+Remove days_since_start (due to high correlation in correlation matrix)
+
+Remove flat_type (due to high VIF with floor_area_sqm)
+
+Remove region_URA due to high craimer V and eta squared score
+
+## 4. Model building 
+
+### 4.1 Initial model
+
+```{r}
+full_model = lm(log_resale_price ~ mature_estate + flat_model + floor_area_sqm + storey_mid + remaining_lease_years + mrt_walking_distance + dist_to_cbd_m + dist_nearest_park_m + dist_nearest_hawker_centre_m + sora_monthly_avg + Per_Capita_GDP, data = data_modelling)
+
+stepAIC(full_model, direction="backward", k = log(258649))  # for backward selection
+
+summary(full_model)
+anova(full_model)
+
+vif_results <- car::vif(full_model)
+print(vif_results)    
+```
+
+### 4.2 Final model
+
+```{r}
+final_model = lm(log_resale_price ~ Per_Capita_GDP + floor_area_sqm + storey_mid + remaining_lease_years + dist_to_cbd_m + sora_monthly_avg + mature_estate, data = data_modelling)
+
+
+stepAIC(final_model, direction="backward", k = log(258649))  # for backward selection
+
+summary(final_model)
+anova(final_model)
+
+vif_results <- car::vif(final_model)
+print(vif_results)
+```
+
+Because your dependent variable is log-transformed, the exact percentage change in resale price for a 1-unit increase in the predictor is calculated using this formula:
+
+**Percentage Change** = $(e^{\beta} - 1) \times 100$
+
+| Feature | Original Estimate ($\beta$) | Exact Percentage Change | Interpretation (for a 1-unit increase) |
+|:-----------------|:-----------------|:-----------------|:-----------------|
+| **mature_estateMature** | 0.1154 | **+12.23%** | Mature estates are 12.23% more expensive than non-mature estates. |
+| **floor_area_sqm** | 0.009683 | **+0.97%** | Each additional square meter increases price by 0.97%. |
+| **storey_mid** | 0.008783 | **+0.88%** | Each higher floor increases price by 0.88%. |
+| **remaining_lease_years** | 0.009374 | **+0.94%** | Each extra year of remaining lease increases price by 0.94%. |
+| **dist_to_cbd_m** | -0.00002349 | **-0.00235%** | Each meter further from the CBD *decreases* price by 0.00235% (or -2.35% per kilometer). |
+| **sora_monthly_avg** | 0.04535 | **+4.64%** | A 1-unit increase in SORA increases price by 4.64%. |
+| **Per_Capita_GDP** | 0.00001688 | **+0.00169%** | A \$1 increase in GDP per capita increases price by 0.00169% (or +1.69% per \$1000 increase). |
+
+*Note: For very small coefficients (like distance to CBD or GDP), the percentage change is nearly identical to just multiplying the estimate by 100. However, for larger coefficients (like mature estate), the exponential formula is strictly required for accuracy.*
+
+#Evalaluating final model
+```{r}
+# Calculate exact-dollar metrics for Final Model
+preds_actual_final <- exp(predict(final_model, data_modelling))
+actuals_final <- exp(data_modelling$log_resale_price)
+
+rmse_final <- sqrt(mean((actuals_final - preds_actual_final)^2))
+# NEW: Mean Bias Error for Final Model
+mbe_final <- mean(actuals_final - preds_actual_final)
+
+cat(sprintf("Final Model RMSE: $%.2f\n", rmse_final))
+cat(sprintf("Final Model MBE: $%.2f\n", mbe_final))
+
+# Quick comparison logic
+bias_direction <- if(mbe_final > 0) "underpredicting" else "overpredicting"
+cat(sprintf("On average, the final model is %s prices by $%.2f\n", bias_direction, abs(mbe_final)))
+```
+
+#calculate CV-RMSE
+```{r}
+# Function for calculating CVRMSE 
+calculate_cvrmse <- function(actuals, predicts) {
+  rmse <- sqrt(mean((actuals - predicts)^2))
+  mean_actual <- mean(actuals)
+  cvrmse <- (rmse / mean_actual) * 100 
+  return(cvrmse)
+}
+
+# 1. CVRMSE for Baseline Model
+actuals_base <- exp(data_modelling$log_resale_price)
+preds_base   <- exp(predict(baseline_model, data_modelling))
+cvrmse_base <- calculate_cvrmse(actuals_base, preds_base)
+
+# 2. CVRMSE for Final Model
+actuals_final <- exp(data_modelling$log_resale_price)
+preds_final   <- exp(predict(test_model, data_modelling))
+cvrmse_final <- calculate_cvrmse(actuals_final, preds_final)
+
+#Output Results 
+cat(sprintf("Baseline CVRMSE: %.2f%%\n", cvrmse_base))
+cat(sprintf("Final Model CVRMSE: %.2f%%\n", cvrmse_final))
+```
+## 5. Model Adequacy Checks
+
+### 5.1 Checking validity of dimensionality reduction techniques
+
+```{r}
+# 1. Prepare the evaluation dataset
+# Drop NAs first so the number of rows fed into the model perfectly matches the predictions.
+# We DO NOT select/drop any columns here, so 'town' and 'flat_model_raw' are preserved.
+data_eval <- data %>%
+  mutate(across(where(is.character), as.factor)) %>%
+  drop_na(dist_to_cbd_m, dist_nearest_park_m, dist_nearest_hawker_centre_m)
+
+# 2. Build the model on this unified dataset
+# (Ensure this formula matches your exact finalized features)
+test_model_eval <- lm(log_resale_price ~ mature_estate +
+                        floor_area_sqm + storey_mid + remaining_lease_years + 
+                        mrt_walking_distance + dist_to_cbd_m + Per_Capita_GDP, 
+                      data = data_eval)
+
+# 3. Append predictions directly to the dataset
+data_eval <- data_eval %>%
+  mutate(
+    log_predictions = predict(test_model_eval, newdata = data_eval),
+    predicted_price = exp(log_predictions) # Convert back to actual dollars for evaluation
+  )
+
+# 4. Define the evaluation function
+evaluate_group_performance <- function(df, group_col, actual_col = "resale_price", pred_col = "predicted_price") {
+  df %>%
+    group_by(!!sym(group_col)) %>%
+    summarise(
+      N = n(),
+      RMSE = sqrt(mean((!!sym(actual_col) - !!sym(pred_col))^2)),
+      MAE = mean(abs(!!sym(actual_col) - !!sym(pred_col))),
+      Mean_Bias = mean(!!sym(actual_col) - !!sym(pred_col)) # Positive = Underpredicted
+    ) %>%
+    arrange(desc(RMSE)) %>%
+    as.data.frame()
+}
+
+# 5. Run the spatial and structural evaluations
+cat("\n--- Top 10 Highest RMSE by Town ---\n")
+town_diagnostics <- evaluate_group_performance(data_eval, "town")
+print(town_diagnostics)
+
+cat("\n--- Top 10 Highest RMSE by Raw Flat Model ---\n")
+flat_model_diagnostics <- evaluate_group_performance(data_eval, "flat_model_raw")
+print(flat_model_diagnostics)
+```
+
+### 5.2 Checking constant variance and mean 0 assumptions
+
+```{r}
+### 4.3 Model Adequacy Checking
+# Extract standardized residuals
+SR_final <- rstandard(final_model)
+
+# 1. Normality of Residuals (QQ Plot)
+# Look for adherence to the red diagonal line. Due to large N, expect some tail deviation.
+qqnorm(SR_final, main = "QQ Plot of Standardized Residuals", pch = 20, col = rgb(0,0,0,0.05))
+qqline(SR_final, col = "red", lwd = 2)
+
+# 2. Linearity & Constant Variance (Residuals vs Fitted)
+# Look for a random horizontal band around 0 without funnel shapes (heteroscedasticity).
+plot(fitted(final_model), SR_final, 
+     main = "Standardized Residuals vs Fitted Values", 
+     xlab = "Fitted log_resale_price", 
+     ylab = "Standardized Residuals", 
+     pch = 20, col = rgb(0,0,0,0.05))
+abline(h = 0, col = "red", lwd = 2)
+```
+
+```{r}
+# 3. Residuals vs Predictors 
+# Look for random scatter. Non-random patterns (like curves) indicate missing higher-order terms.
+par(mfrow = c(2, 3)) # Set up a 2x3 grid for the 6 continuous variables
+
+plot(data_modelling$floor_area_sqm, SR_final, 
+     main = "Residuals vs Floor Area", xlab = "Floor Area (sqm)", 
+     ylab = "Standardized Residuals", pch = 20, col = rgb(0,0,0,0.05))
+abline(h = 0, col = "red", lwd = 2)
+
+plot(data_modelling$dist_to_cbd_m, SR_final, 
+     main = "Residuals vs Distance to CBD", xlab = "Distance to CBD (m)", 
+     ylab = "Standardized Residuals", pch = 20, col = rgb(0,0,0,0.05))
+abline(h = 0, col = "red", lwd = 2)
+
+plot(data_modelling$storey_mid, SR_final, 
+     main = "Residuals vs Storey Midpoint", xlab = "Storey (Mid)", 
+     ylab = "Standardized Residuals", pch = 20, col = rgb(0,0,0,0.05))
+abline(h = 0, col = "red", lwd = 2)
+
+plot(data_modelling$remaining_lease_years, SR_final, 
+     main = "Residuals vs Remaining Lease", xlab = "Lease Years Remaining", 
+     ylab = "Standardized Residuals", pch = 20, col = rgb(0,0,0,0.05))
+abline(h = 0, col = "red", lwd = 2)
+
+plot(data_modelling$Per_Capita_GDP, SR_final, 
+     main = "Residuals vs Per Capita GDP", xlab = "Per Capita GDP", 
+     ylab = "Standardized Residuals", pch = 20, col = rgb(0,0,0,0.05))
+abline(h = 0, col = "red", lwd = 2)
+
+plot(data_modelling$sora_monthly_avg, SR_final, 
+     main = "Residuals vs SORA", xlab = "SORA Monthly Avg", 
+     ylab = "Standardized Residuals", pch = 20, col = rgb(0,0,0,0.05))
+abline(h = 0, col = "red", lwd = 2)
+
+par(mfrow = c(1, 1)) # Reset plot window back to 1x1
+```
