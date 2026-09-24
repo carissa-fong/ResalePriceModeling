@@ -1,4 +1,4 @@
-# CS3244 Group 3 Resale Price Modeling
+# Resale Price Modeling
 
 This repository contains the data-preparation pipeline, exploratory analysis, and final modeling artifacts for the HDB resale price study.
 
